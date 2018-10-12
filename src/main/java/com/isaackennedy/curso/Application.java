@@ -13,6 +13,7 @@ import com.isaackennedy.curso.domain.Cidade;
 import com.isaackennedy.curso.domain.Cliente;
 import com.isaackennedy.curso.domain.Endereco;
 import com.isaackennedy.curso.domain.Estado;
+import com.isaackennedy.curso.domain.ItemPedido;
 import com.isaackennedy.curso.domain.Pagamento;
 import com.isaackennedy.curso.domain.PagamentoComBoleto;
 import com.isaackennedy.curso.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.isaackennedy.curso.repositories.CidadeRepository;
 import com.isaackennedy.curso.repositories.ClienteRepository;
 import com.isaackennedy.curso.repositories.EnderecoRepository;
 import com.isaackennedy.curso.repositories.EstadoRepository;
+import com.isaackennedy.curso.repositories.ItemPedidoRepository;
 import com.isaackennedy.curso.repositories.PagamentoRepository;
 import com.isaackennedy.curso.repositories.PedidoRepository;
 import com.isaackennedy.curso.repositories.ProdutoRepository;
@@ -56,6 +58,9 @@ public class Application implements CommandLineRunner {
 	@Autowired 
 	private PagamentoRepository pgtoRepo;
 
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepo;
+	
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
@@ -120,5 +125,17 @@ public class Application implements CommandLineRunner {
 		
 		pgtoRepo.saveAll(Arrays.asList(pgto1, pgto2));
 		
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
+		ped2.getItens().add(ip3);
+		
+		p1.getItens().add(ip1);
+		p2.getItens().add(ip3);
+		p3.getItens().add(ip2);
+		
+		itemPedidoRepo.saveAll(Arrays.asList(ip1, ip2, ip3));
 	}
 }
