@@ -1,10 +1,14 @@
 package com.isaackennedy.curso.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.isaackennedy.curso.domain.Categoria;
+import com.isaackennedy.curso.dto.CategoriaDTO;
+import com.isaackennedy.curso.dto.NewClienteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.isaackennedy.curso.domain.Cliente;
 import com.isaackennedy.curso.dto.ClienteDTO;
 import com.isaackennedy.curso.services.ClienteService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value="/clientes")
@@ -62,5 +67,13 @@ public class ClienteResource {
 		Page<ClienteDTO> listDTO = list.map(ClienteDTO::new);
 		return ResponseEntity.ok().body(listDTO);
 	}
-	
+
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody NewClienteDTO objDTO) {
+		Cliente obj = service.fromDTO(objDTO);
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
 }
