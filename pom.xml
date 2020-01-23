@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.runtime.version>12</java.runtime.version>
+        <java.version>12</java.version>
     </properties>
 
     <dependencies>
