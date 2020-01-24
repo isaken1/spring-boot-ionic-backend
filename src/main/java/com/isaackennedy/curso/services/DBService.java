@@ -5,6 +5,7 @@ import com.isaackennedy.curso.domain.enums.EstadoPagamento;
 import com.isaackennedy.curso.domain.enums.TipoCliente;
 import com.isaackennedy.curso.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -40,6 +41,9 @@ public class DBService {
 
     @Autowired
     private ItemPedidoRepository itemPedidoRepo;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public void instantiateTesteDatabase() throws ParseException {
         Categoria cat1 = new Categoria(null, "Informática");
@@ -98,11 +102,14 @@ public class DBService {
         estRepository.saveAll(Arrays.asList(est1, est2));
         citRepository.saveAll(Arrays.asList(c1, c2, c3));
 
-        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377",
+                TipoCliente.PESSOAFISICA, passwordEncoder.encode("Teste123"));
         cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
 
-        Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
-        Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "3877012", cli1, c2);
+        Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303",
+                "Jardim", "38220834", cli1, c1);
+        Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800",
+                "Centro", "3877012", cli1, c2);
 
         cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
 
@@ -117,7 +124,8 @@ public class DBService {
         Pagamento pgto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
         ped1.setPagamento(pgto1);
 
-        Pagamento pgto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+        Pagamento pgto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2,
+                sdf.parse("20/10/2017 00:00"), null);
         ped2.setPagamento(pgto2);
 
         cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
