@@ -2,6 +2,7 @@ package com.isaackennedy.curso.services;
 
 import com.isaackennedy.curso.domain.*;
 import com.isaackennedy.curso.domain.enums.EstadoPagamento;
+import com.isaackennedy.curso.domain.enums.Perfil;
 import com.isaackennedy.curso.domain.enums.TipoCliente;
 import com.isaackennedy.curso.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,19 +103,27 @@ public class DBService {
         estRepository.saveAll(Arrays.asList(est1, est2));
         citRepository.saveAll(Arrays.asList(c1, c2, c3));
 
-        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377",
+        Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "38327831720",
                 TipoCliente.PESSOAFISICA, passwordEncoder.encode("Teste123"));
         cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+
+        Cliente cli2 = new Cliente(null, "Isaac Kennedy", "isaac_kennedy@hotmail.com",
+                "49686816151", TipoCliente.PESSOAFISICA, passwordEncoder.encode("Teste321"));
+        cli2.getTelefones().addAll(Arrays.asList("12345678", "87654321"));
+        cli2.addPerfil(Perfil.ADMIN);
 
         Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303",
                 "Jardim", "38220834", cli1, c1);
         Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800",
                 "Centro", "3877012", cli1, c2);
+        Endereco e3 = new Endereco(null, "Rua Olavo Montenegro", "1745", null,
+                "Nova Parnamirim", "4231236", cli2, c3);
 
         cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+        cli2.getEnderecos().add(e3);
 
-        cliRepo.save(cli1);
-        endRepo.saveAll(Arrays.asList(e1, e2));
+        cliRepo.saveAll(Arrays.asList(cli1, cli2));
+        endRepo.saveAll(Arrays.asList(e1, e2, e3));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
