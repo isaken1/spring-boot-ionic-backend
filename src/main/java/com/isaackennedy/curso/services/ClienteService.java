@@ -1,15 +1,18 @@
 package com.isaackennedy.curso.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.isaackennedy.curso.domain.Categoria;
 import com.isaackennedy.curso.domain.Cidade;
+import com.isaackennedy.curso.domain.Cliente;
 import com.isaackennedy.curso.domain.Endereco;
+import com.isaackennedy.curso.domain.enums.Perfil;
 import com.isaackennedy.curso.domain.enums.TipoCliente;
+import com.isaackennedy.curso.dto.ClienteDTO;
 import com.isaackennedy.curso.dto.NewClienteDTO;
-import com.isaackennedy.curso.repositories.CidadeRepository;
+import com.isaackennedy.curso.repositories.ClienteRepository;
 import com.isaackennedy.curso.repositories.EnderecoRepository;
+import com.isaackennedy.curso.security.UserSS;
+import com.isaackennedy.curso.services.exceptions.AuthorizationException;
+import com.isaackennedy.curso.services.exceptions.DataIntegrityException;
+import com.isaackennedy.curso.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -17,13 +20,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.isaackennedy.curso.domain.Cliente;
-import com.isaackennedy.curso.dto.ClienteDTO;
-import com.isaackennedy.curso.repositories.ClienteRepository;
-import com.isaackennedy.curso.services.exceptions.DataIntegrityException;
-import com.isaackennedy.curso.services.exceptions.ObjectNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -38,6 +38,11 @@ public class ClienteService {
 	private EnderecoRepository enderecoRepository;
 	
 	public Cliente find(Integer id) {
+		UserSS user = UserService.authenticated();
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+
 		Optional<Cliente> cat = repo.findById(id);
 		
 		return cat.orElseThrow(() -> new ObjectNotFoundException(
